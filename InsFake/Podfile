@@ -1,0 +1,14 @@
+platform :ios,"8.0"
+ 
+target 'InsFake' do
+  project 'InsFake'
+  use_frameworks!
+ 
+  pod 'IGListKit'
+  pod 'AFNetworking'
+  pod 'MBProgressHUD', '~> 1.1.0'
+  pod 'SDWebImage', '~>3.7'
+  pod "Masonry"
+  pod 'XRCarouselView'
+  pod 'AVOSCloud'
+end
