@@ -7,23 +7,17 @@
 //
 
 #import "PublicationViewController.h"
-#import "showVideoView.h"
-#import "PlaceholderTextView.h"
-#import "ZZPhoto.h"
-#import "ZZCamera.h"
-#import "MBProgressHUD+MJ.h"
+#import "ZLDefine.h"
 
 #define kScreenWidth      [UIScreen mainScreen].bounds.size.width
 #define kScreenHeight     [UIScreen mainScreen].bounds.size.height
 
-@interface PublicationViewController ()<UITextViewDelegate>{
-    UIScrollView* showScrollView;
-    PlaceholderTextView* titleTexView;
-    PlaceholderTextView* contentTextView;
-    showVideoView* showVideo;
-}
-
-@property (nonatomic,copy) NSMutableArray* imageUrlArray;
+@interface PublicationViewController ()
+// 相册单选
+@property (strong, nonatomic) IBOutlet UIImageView *imageView;
+// 相册单选带裁剪
+@property (strong, nonatomic) IBOutlet UIImageView *imageView_Cut;
+@property (nonatomic, strong) NSArray<ZLSelectPhotoModel *> *lastSelectMoldels;
 
 @end
 
@@ -31,9 +25,35 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
-    self.view.backgroundColor=[UIColor whiteColor];
-    [self addSubViews];
+    self.edgesForExtendedLayout=UIRectEdgeNone;
+    UIImage* head=[UIImage imageNamed:@"head.jpg"];
+    UIImageView* imgView=[[UIImageView alloc]initWithFrame:CGRectMake(12, 10, 35, 35)];
+    imgView.image=head;
+    //UIImageView* imgView=[[UIImageView alloc]initWithImage:head];
+    imgView.layer.masksToBounds=YES;
+    imgView.layer.cornerRadius=imgView.frame.size.width/2;
+    imgView.contentMode=UIViewContentModeScaleAspectFit;
+    [self.view addSubview:imgView];
+    
+    UILabel* userName=[[UILabel alloc]initWithFrame:CGRectMake(70, 10, 150, 35)];
+    userName.text=@"卫宫家的饭桶";
+    userName.textColor=[UIColor blackColor];
+    [self.view addSubview:userName];
+    
+    _imageView=[[UIImageView alloc]initWithFrame:CGRectMake(6, 80, 160, 160)];
+    [self.view addSubview:_imageView];
+    
+    UIButton* selectBtn=[[UIButton alloc]initWithFrame:CGRectMake(20, 350, 100, 40)];
+    [selectBtn setTitle:@"相册单选" forState:UIControlStateNormal];
+    selectBtn.backgroundColor=[UIColor colorWithRed:22.0/255.0 green:155.0/255.0 blue:213.0/255.0 alpha:1];
+    [selectBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    selectBtn.titleLabel.font=[UIFont systemFontOfSize:20.0];
+    selectBtn.layer.cornerRadius=5;
+    [selectBtn addTarget:self action:@selector(btnClick:) forControlEvents:UIControlEventTouchUpInside];
+    selectBtn.tag=1;
+    [self.view addSubview:selectBtn];
+    
+    // Do any additional setup after loading the view, typically from a nib.
 }
 
 - (void)viewWillAppear:(BOOL)animated{
@@ -44,275 +64,45 @@
     self.navigationItem.rightBarButtonItem=[[UIBarButtonItem alloc]initWithTitle:@"发表" style:UIBarButtonItemStylePlain target:self action:@selector(finishPublishButtonAction:)];
 }
 
-- (void)addSubViews{
-    
-    showScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, kScreenWidth, kScreenHeight-100)];
-    showScrollView.contentSize = CGSizeMake(kScreenWidth, kScreenHeight);
-    showScrollView.showsVerticalScrollIndicator = NO;
-    showScrollView.keyboardDismissMode = YES;
-    [self.view addSubview:showScrollView];
-    
-    
-    titleTexView = [[PlaceholderTextView alloc]initWithFrame:CGRectMake(12, 10, kScreenWidth-24, 35)];
-    titleTexView.delegate = self;
-    titleTexView.font = [UIFont systemFontOfSize:15.f];
-    titleTexView.textColor = [UIColor blackColor];
-    titleTexView.textAlignment = NSTextAlignmentLeft;
-    titleTexView.editable = YES;
-    titleTexView.placeholderColor = [UIColor darkTextColor];
-    titleTexView.placeholder = @"标题（必填）";
-    //[showScrollView addSubview:titleTexView];
-    
-    UIImage* head=[UIImage imageNamed:@"head.jpg"];
-    UIImageView* imgView=[[UIImageView alloc]initWithFrame:CGRectMake(12, 10, 35, 35)];
-    imgView.image=head;
-    //UIImageView* imgView=[[UIImageView alloc]initWithImage:head];
-    imgView.layer.masksToBounds=YES;
-    imgView.layer.cornerRadius=imgView.frame.size.width/2;
-    imgView.contentMode=UIViewContentModeScaleAspectFit;
-    [showScrollView addSubview:imgView];
-    
-    UILabel* userName=[[UILabel alloc]initWithFrame:CGRectMake(70, 10, 150, 35)];
-    userName.text=@"卫宫家的饭桶";
-    userName.textColor=[UIColor blackColor];
-    [showScrollView addSubview:userName];
-    
-    
-    UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(12, titleTexView.frame.origin.y+titleTexView.frame.size.height+10, kScreenWidth-12, 0.5)];
-    lineView.backgroundColor = [UIColor darkTextColor];
-    [showScrollView addSubview:lineView];
-    
-    contentTextView = [[PlaceholderTextView alloc]initWithFrame:CGRectMake(12, lineView.frame.origin.y+lineView.frame.size.height+10, kScreenWidth-24, 114)];
-    contentTextView.delegate = self;
-    contentTextView.font = [UIFont systemFontOfSize:14.f];
-    contentTextView.textColor = [UIColor blackColor];
-    contentTextView.textAlignment = NSTextAlignmentLeft;
-    contentTextView.editable = YES;
-    contentTextView.placeholderColor = [UIColor darkTextColor];
-    contentTextView.placeholder = @"分享新鲜事...";
-    [showScrollView addSubview:contentTextView];
-    
-    showVideo = [[showVideoView alloc]initWithFrame:CGRectMake(0, contentTextView.frame.origin.y+contentTextView.frame.size.height+5, kScreenWidth, 78)];
-    [showScrollView addSubview:showVideo];
-    
-    if (_imageUrlArray == nil) {
-        
-        _imageUrlArray = [[NSMutableArray alloc]init];
-        
-    }
-    
-}
-
-#pragma mark 🎱 点击发布按钮
-
-- (void)finishPublishButtonAction:(UIButton*)sender{
-    
-    
-    [MBProgressHUD showMessage:@"上传中..." toView:self.view];
-    
-    if (_imageUrlArray == nil) {
-        
-        _imageUrlArray = [[NSMutableArray alloc]init];
-        
-    }
-    
-    if ([self collectModelInformation]) {
-        
-        // 上传数据
-        
-    }
-    
-    
-    
-}
-
-#pragma mark 🎱 退出发布界面按钮
-
-- (void)deletePublishButtonAction:(UIButton *)btn{
-    
-    if (showVideo.player) {
-        
-        [showVideo.player stop];
-    }
-    
-    [showVideo.player removeFromSuperview];
-    [self dismissViewControllerAnimated:YES completion:nil];
-    
-}
-
-#pragma mark 🎱 发布前检查数据
-
-- (BOOL)collectModelInformation{
-    
-    if (titleTexView.text.length == 0) {
-        
-        [MBProgressHUD showError:@"请填写标题"];
-        
-        return  NO;
-        
-    }else if (contentTextView.text.length == 0){
-        
-        [MBProgressHUD showError:@"请填写商品价格"];
-        
-        return NO;
-        
-    }else if (showVideo.imgeArray.count == 0 ){
-        
-        [MBProgressHUD showError:@"请至少上传一张照片"];
-        
-        return NO;
-        
-    }else{
-        
-        
-        if (showVideo.isPhoto) {
-            
-            
-            //处理准备上传照片
-            for (int i = 0; i< showVideo.imgeArray.count; i++) {
-                
-                UIImage* image;
-                
-                NSString* fileName;
-                
-                NSString* name;
-                
-                if ([showVideo.imgeArray[i] isKindOfClass:[ZZPhoto class]]) {
-                    
-                    ZZPhoto* model = showVideo.imgeArray[i];
-                    
-                    image = model.originImage;
-                    
-                    NSDateFormatter* dateFor = [[NSDateFormatter alloc]init];
-                    dateFor.dateFormat = @"yyyyMMddHHmmssSSS";
-                    
-                    fileName = [NSString stringWithFormat:@"%@.jpg",[dateFor stringFromDate:model.createDate]];
-                    
-                }else if([showVideo.imgeArray[i] isKindOfClass:[ZZCamera class]]){
-                    
-                    ZZCamera* model = showVideo.imgeArray[i];
-                    
-                    image = model.image;
-                    
-                    NSDateFormatter* dateFor = [[NSDateFormatter alloc]init];
-                    dateFor.dateFormat = @"yyyyMMddHHmmssSSS";
-                    
-                    fileName = [NSString stringWithFormat:@"%@.jpg",[dateFor stringFromDate:model.createDate]];
-                    
-                }else{
-                    
-                    UIImage* tempImage = showVideo.imgeArray[i];
-                    
-                    image = tempImage;
-                    
-                    fileName = [NSString stringWithFormat:@"goodsImageFielName%d.jpg",i];
-                    
-                }
-                
-                name = [NSString stringWithFormat:@"GoodsImage%d.jpg",i];
-                
-                NSData *imageData = UIImageJPEGRepresentation(image,0.7);
-                
-                NSDictionary* dic = @{@"fileData":imageData,@"name":name,@"fileName":fileName,@"mimeType":@"image/jpg"};
-                [_imageUrlArray addObject:dic];
-                
-            }
-        }
-        
-        if (showVideo.isVideo) {
-            
-            if(showVideo.videoModel){
-                
-                //处理准备上传视频
-                NSURL* url = [NSURL fileURLWithPath:showVideo.videoModel.videoAbsolutePath];
-                NSData* videoData = [NSData dataWithContentsOfURL:url];
-                
-                if (videoData) {
-                    
-                    NSDictionary* dic = @{@"fileData":videoData,@"name":@"GoodsVideo",@"fileName":@"Video.mp4",@"mimeType":@"video/mp4"};
-                    [_imageUrlArray addObject:dic];
-                }
-            }
-            
-        }
-        
-        if (showVideo.isRecord) {
-            
-            if (showVideo.messageModel) {
-                
-                NSURL* url = [NSURL fileURLWithPath:showVideo.messageModel.mp3FilePath];
-                
-                NSData* recordData = [NSData dataWithContentsOfURL:url];
-                
-                NSDictionary* dic = @{@"fileData":recordData,@"name":@"GoodsRecord",@"fileName":@"Record.mp3",@"mimeType":@"video/mp3"};
-                
-                
-                [_imageUrlArray addObject:dic];
-                
-            }
-            
-        }
-        
-        
-        
-        
-        return YES;
-    }
-    
-}
-
-- (BOOL)textViewShouldBeginEditing:(UITextView *)textView{
-    
-    if ([textView isEqual:contentTextView]) {
-        
-        if (showVideo.addRecordButton.hidden) {
-            
-            
-            return NO;
-        }else{
-            return YES;
-        }
-    }else{
-        
-        return YES;
-    }
-    
-}
-
-- (void)textViewDidChange:(UITextView *)textView{
-    
-    if ([textView isEqual:titleTexView]) {
-        
-        if (textView.text.length > 20){
-            // 删除
-            textView.text = [textView.text substringToIndex:20];
-            [MBProgressHUD showError:@"最多输入20个字符"];
-        }
-    }else if ([textView isEqual:contentTextView]){
-        
-        if (textView.text.length>0) {
-            
-            [showVideo.addRecordButton setImage:[UIImage imageNamed:@"second_sounding_s"] forState:UIControlStateNormal];
-            showVideo.addRecordButton.enabled = NO;
-            
-            if (textView.text.length > 140){
-                // 删除
-                textView.text = [textView.text substringToIndex:140];
-                [MBProgressHUD showError:@"最多输入140个字符"];
-                
-            }
-        }else{
-            showVideo.addRecordButton.enabled = YES;
-            
-            [showVideo.addRecordButton setImage:[UIImage imageNamed:@"second_sounding_d"] forState:UIControlStateNormal];
-            
-        }
-        
+- (IBAction)btnClick:(UIButton *)sender {
+    NSInteger tag = sender.tag;
+    switch (tag) {
+        case 1:{ // 相册单选  不裁剪
+            ZLOnePhoto *one = [ZLOnePhoto shareInstance];
+            [one presentPicker:PickerType_Photo photoCut:PhotoCutType_NO target:self callBackBlock:^(UIImage *image, BOOL isCancel) {
+                self.imageView.image = image;
+            }];}
+            break;
+        case 2:{ // 相册单选  裁剪
+            ZLOnePhoto *one = [ZLOnePhoto shareInstance];
+            [one presentPicker:PickerType_Photo photoCut:PhotoCutType_YES target:self callBackBlock:^(UIImage *image, BOOL isCancel) {
+                self.imageView_Cut.image = image;
+            }];}
+            break;
+        case 3:{ // 相机  不裁剪
+            ZLOnePhoto *one = [ZLOnePhoto shareInstance];
+            [one presentPicker:PickerType_Camera photoCut:PhotoCutType_NO target:self callBackBlock:^(UIImage *image, BOOL isCancel) {
+                self.imageView.image = image;
+            }];}
+            break;
+        case 4:{ // 相机  裁剪
+            ZLOnePhoto *one = [ZLOnePhoto shareInstance];
+            [one presentPicker:PickerType_Camera photoCut:PhotoCutType_YES target:self callBackBlock:^(UIImage *image, BOOL isCancel) {
+                self.imageView_Cut.image = image;
+            }];}
+            break;
+        case 5:{ // 相册多选
+            ZLPhotoActionSheet *actionSheet = [[ZLPhotoActionSheet alloc] init];
+            //设置照片最大选择数
+            actionSheet.maxSelectCount = 5;
+            [actionSheet showPhotoLibraryWithSender:self lastSelectPhotoModels:self.lastSelectMoldels completion:^(NSArray<UIImage *> * _Nonnull selectPhotos, NSArray<ZLSelectPhotoModel *> * _Nonnull selectPhotoModels) {
+                NSLog(@"%@", selectPhotos);
+            }];}
+            break;
+        default:
+            break;
     }
 }
-
-
-
 
 
 - (void)didReceiveMemoryWarning {
@@ -320,14 +110,5 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end
