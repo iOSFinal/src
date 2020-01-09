@@ -1,0 +1,14 @@
+${PODS_ROOT}/Target Support Files/Pods-InsFake/Pods-InsFake-frameworks.sh
+${BUILT_PRODUCTS_DIR}/AVOSCloud/AVOSCloud.framework
+${BUILT_PRODUCTS_DIR}/DACircularProgress/DACircularProgress.framework
+${BUILT_PRODUCTS_DIR}/GXWaterCollectionViewLayout/GXWaterCollectionViewLayout.framework
+${BUILT_PRODUCTS_DIR}/HDAlertView/HDAlertView.framework
+${BUILT_PRODUCTS_DIR}/LemonBubble/LemonBubble.framework
+${BUILT_PRODUCTS_DIR}/MBProgressHUD/MBProgressHUD.framework
+${BUILT_PRODUCTS_DIR}/MJRefresh/MJRefresh.framework
+${BUILT_PRODUCTS_DIR}/MWPhotoBrowser/MWPhotoBrowser.framework
+${BUILT_PRODUCTS_DIR}/PSTCollectionView/PSTCollectionView.framework
+${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework
+${BUILT_PRODUCTS_DIR}/UITableView+FDTemplateLayoutCell/UITableView_FDTemplateLayoutCell.framework
+${BUILT_PRODUCTS_DIR}/WSDatePickerView/WSDatePickerView.framework
+${BUILT_PRODUCTS_DIR}/XRCarouselView/XRCarouselView.framework

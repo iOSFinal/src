@@ -1,0 +1,6 @@
+framework module GXWaterCollectionViewLayout {
+  umbrella header "GXWaterCollectionViewLayout-umbrella.h"
+
+  export *
+  module * { export * }
+}

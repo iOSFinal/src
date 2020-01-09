@@ -1,0 +1,67 @@
+PODS:
+  - AVOSCloud (12.1.0)
+  - DACircularProgress (2.3.1)
+  - GXWaterCollectionViewLayout (0.0.2)
+  - HDAlertView (3.0)
+  - LemonBubble (1.0.1)
+  - MBProgressHUD (1.1.0)
+  - MJRefresh (3.3.1)
+  - MWPhotoBrowser (1.2.1):
+    - DACircularProgress
+    - MBProgressHUD
+    - PSTCollectionView (~> 1.2)
+    - SDWebImage (~> 3.5)
+  - PSTCollectionView (1.2.3)
+  - SDWebImage (3.8.3):
+    - SDWebImage/Core (= 3.8.3)
+  - SDWebImage/Core (3.8.3)
+  - "UITableView+FDTemplateLayoutCell (1.6)"
+  - WSDatePickerView (1.0.0)
+  - XRCarouselView (2.6.1)
+
+DEPENDENCIES:
+  - AVOSCloud
+  - GXWaterCollectionViewLayout
+  - HDAlertView
+  - LemonBubble (= 1.0.1)
+  - MJRefresh
+  - MWPhotoBrowser
+  - SDWebImage (~> 3.7)
+  - "UITableView+FDTemplateLayoutCell"
+  - WSDatePickerView (~> 1.0)
+  - XRCarouselView
+
+SPEC REPOS:
+  trunk:
+    - AVOSCloud
+    - DACircularProgress
+    - GXWaterCollectionViewLayout
+    - HDAlertView
+    - LemonBubble
+    - MBProgressHUD
+    - MJRefresh
+    - MWPhotoBrowser
+    - PSTCollectionView
+    - SDWebImage
+    - "UITableView+FDTemplateLayoutCell"
+    - WSDatePickerView
+    - XRCarouselView
+
+SPEC CHECKSUMS:
+  AVOSCloud: c8f9d789d67dfed10911e23bc1af289c23b108bb
+  DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
+  GXWaterCollectionViewLayout: 11b1899756be314783e6a3801a6371d6add9db2f
+  HDAlertView: bd71d43b310595ecb48642517d0969fa89276d25
+  LemonBubble: 6008ab080b49b37de1cf952c2e71ee3691a21e04
+  MBProgressHUD: e7baa36a220447d8aeb12769bf0585582f3866d9
+  MJRefresh: eeda70fbf0ad277f3178cef1cd0c3532591d6237
+  MWPhotoBrowser: 7087b4c828297ef34ff2b0892c8e967034a86842
+  PSTCollectionView: 6749df92885353521f55279a7ce2b293762e2be4
+  SDWebImage: a72e880a8fe0f7fc31efe15aaed443c074d2a80c
+  "UITableView+FDTemplateLayoutCell": 5c949b4a5059c404b442926c0e80f81d10a2d66f
+  WSDatePickerView: c7059408838553863b4eaa09bec12577096f003f
+  XRCarouselView: d3f949d1601e7de51604cdabd6e2f35a770e0f99
+
+PODFILE CHECKSUM: f4301dd59030f3c04ce0c2c80566e4d7dfb8c04c
+
+COCOAPODS: 1.8.1

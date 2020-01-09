@@ -1,0 +1,6 @@
+framework module LemonBubble {
+  umbrella header "LemonBubble-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,17 @@
+platform :ios,"8.0"
+ 
+target 'InsFake' do
+  project 'InsFake'
+  use_frameworks!
+ 
+  pod 'SDWebImage', '~>3.7'
+  pod 'XRCarouselView'
+  pod 'AVOSCloud'
+  pod 'MJRefresh'
+  pod 'UITableView+FDTemplateLayoutCell'
+  pod 'HDAlertView'
+  pod 'LemonBubble', '1.0.1'
+  pod "MWPhotoBrowser"
+  pod 'GXWaterCollectionViewLayout'
+  pod 'WSDatePickerView', '~> 1.0'
+end

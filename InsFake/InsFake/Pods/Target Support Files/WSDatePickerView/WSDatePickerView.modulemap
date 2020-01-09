@@ -1,0 +1,6 @@
+framework module WSDatePickerView {
+  umbrella header "WSDatePickerView-umbrella.h"
+
+  export *
+  module * { export * }
+}
